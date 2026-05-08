@@ -4,61 +4,83 @@
     <meta charset="UTF-8">
     <title>Test Técnico UrbanLab</title>
     <style>
-        body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { border: 2px solid #3498db; padding: 30px; border-radius: 15px; background: #1e1e1e; max-width: 500px; width: 90%; text-align: center; }
-        h3 { color: #3498db; margin-top: 0; }
-        #question { font-size: 1.1em; margin-bottom: 20px; min-height: 50px; }
-        .options { display: grid; gap: 10px; }
-        button.opt { background: #333; color: white; border: 1px solid #444; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; text-align: left; }
-        button.opt:hover { background: #444; }
-        #feedback { margin-top: 20px; font-weight: bold; min-height: 25px; }
-        button#next-btn { margin-top: 20px; background: #3498db; border: none; padding: 10px 20px; color: white; border-radius: 5px; cursor: pointer; display: none; }
+        body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .box { border: 2px solid #3498db; padding: 30px; border-radius: 15px; background: #1e1e1e; max-width: 500px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: #3498db; text-align: center; margin-top: 0; }
+        .pregunta-wrap { margin-bottom: 20px; padding: 15px; background: #252525; border-radius: 8px; display: none; }
+        .pregunta-wrap.active { display: block; }
+        .opcion { display: block; width: 100%; padding: 12px; margin: 8px 0; background: #333; color: white; border: 1px solid #444; border-radius: 5px; cursor: pointer; text-align: left; transition: 0.3s; }
+        .opcion:hover { background: #444; }
+        #feedback { text-align: center; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
+        .btn-sig { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; display: none; width: 100%; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>🤖 SIMULADOR DE EXAMEN IA</h3>
-        <div id="question">Cargando pregunta...</div>
-        <div class="options" id="options-container"></div>
-        <div id="feedback"></div>
-        <button id="next-btn" onclick="loadQuestion()">SIGUIENTE PREGUNTA</button>
+
+<div class="box">
+    <h2>🤖 TEST IA URBANLAB</h2>
+    
+    <div id="p1" class="pregunta-wrap active">
+        <p><strong>1. ¿Cuál es el punto más débil de una pieza impresa en 3D (FDM)?</strong></p>
+        <button class="opcion" onclick="validar(1, false, this)">El centro del relleno (infill)</button>
+        <button class="opcion" onclick="validar(1, true, this)">La unión entre capas consecutivas</button>
+        <button class="opcion" onclick="validar(1, false, this)">La base en contacto con la cama</button>
     </div>
 
-    <script>
-        const questions = [
-            { q: "¿Qué ocurre si las capas de impresión son perpendiculares al esfuerzo de tracción?", a: ["Se rompe fácilmente por las capas", "Es mucho más resistente", "No afecta en nada"], c: 0 },
-            { q: "En escala 1:20, una medida real de 2 metros en el plano son:", a: ["10 cm", "5 cm", "20 cm"], c: 0 },
-            { q: "¿Cuál es el esfuerzo principal que soporta un pilar?", a: ["Tracción", "Torsión", "Compresión"], c: 2 },
-            { q: "¿Qué software se usa para preparar el archivo G-Code?", a: ["AutoCAD", "Laminador (Slicer)", "Excel"], c: 1 }
-        ];
+    <div id="p2" class="pregunta-wrap">
+        <p><strong>2. En escala 1:20, si un muro mide 5 cm en el plano, ¿cuánto mide en la realidad?</strong></p>
+        <button class="opcion" onclick="validar(2, false, this)">100 metros</button>
+        <button class="opcion" onclick="validar(2, true, this)">1 metro (10 decímetros)</button>
+        <button class="opcion" onclick="validar(2, false, this)">25 centímetros</button>
+    </div>
 
-        let currentQ = {};
+    <div id="p3" class="pregunta-wrap">
+        <p><strong>3. ¿Qué esfuerzo sufre principalmente la pata de un banco de UrbanLab?</strong></p>
+        <button class="opcion" onclick="validar(3, true, this)">Compresión</button>
+        <button class="opcion" onclick="validar(3, false, this)">Torsión</button>
+        <button class="opcion" onclick="validar(3, false, this)">Cizalladura</button>
+    </div>
 
-        function loadQuestion() {
-            document.getElementById('feedback').innerText = "";
-            document.getElementById('next-btn').style.display = "none";
-            currentQ = questions[Math.floor(Math.random() * questions.length)];
-            document.getElementById('question').innerText = currentQ.q;
-            
-            const container = document.getElementById('options-container');
-            container.innerHTML = "";
-            currentQ.a.forEach((opt, index) => {
-                const btn = document.createElement('button');
-                btn.className = "opt";
-                btn.innerText = opt;
-                btn.onclick = () => check(index);
-                container.appendChild(btn);
-            });
+    <div id="feedback"></div>
+    <button id="nextBtn" class="btn-sig" onclick="siguiente()">SIGUIENTE PREGUNTA ➔</button>
+</div>
+
+<script>
+    let paso = 1;
+
+    function validar(pregunta, esCorrecto, elemento) {
+        const fb = document.getElementById('feedback');
+        const botones = elemento.parentElement.querySelectorAll('.opcion');
+        
+        // Bloquear otros botones
+        botones.forEach(b => b.disabled = true);
+
+        if (esCorrecto) {
+            fb.innerHTML = "✅ ¡CORRECTO!";
+            fb.style.color = "#2ecc71";
+            elemento.style.background = "#2ecc71";
+            elemento.style.color = "black";
+        } else {
+            fb.innerHTML = "❌ INCORRECTO";
+            fb.style.color = "#e74c3c";
+            elemento.style.background = "#e74c3c";
         }
 
-        function check(index) {
-            const f = document.getElementById('feedback');
-            if(index === currentQ.c) {
-                f.innerText = "✅ ¡CORRECTO!";
-                f.style.color = "#2ecc71";
-            } else {
-                f.innerText = "❌ INCORRECTO. Inténtalo de nuevo.";
-                f.style.color = "#e74c3c";
-            }
-            document.getElementById('next-btn').style.display = "inline-block";
+        if(paso < 3) {
+            document.getElementById('nextBtn').style.display = "block";
+        } else {
+            fb.innerHTML += "<br>¡Test finalizado con éxito!";
         }
+    }
+
+    function siguiente() {
+        document.getElementById('p' + paso).classList.remove('active');
+        paso++;
+        document.getElementById('p' + paso).classList.add('active');
+        document.getElementById('feedback').innerHTML = "";
+        document.getElementById('nextBtn').style.display = "none";
+    }
+</script>
+
+</body>
+</html>
