@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Examen Real UrbanLab</title>
+    <style>
+        body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .box { border: 2px solid #3498db; padding: 30px; border-radius: 15px; background: #1e1e1e; max-width: 550px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: #3498db; text-align: center; margin-top: 0; }
+        #progreso { text-align: center; font-size: 0.9em; color: #7f8c8d; margin-bottom: 10px; }
+        .pregunta-texto { font-weight: bold; margin-bottom: 20px; font-size: 1.1em; min-height: 3em; }
+        .opcion { display: block; width: 100%; padding: 12px; margin: 8px 0; background: #333; color: white; border: 1px solid #444; border-radius: 5px; cursor: pointer; text-align: left; transition: 0.2s; }
+        .opcion:hover:not(:disabled) { background: #444; border-color: #3498db; }
+        #feedback { text-align: center; font-weight: bold; margin-top: 15px; min-height: 1.5em; font-size: 1.2em; }
+        .btn-sig { background: #2ecc71; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; margin-top: 15px; display: none; width: 100%; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>🤖 EXAMEN TÉCNICO</h2>
+    <div id="progreso">Cargando...</div>
+    
+    <div id="juego">
+        <div class="pregunta-texto" id="txtPregunta"></div>
+        <div id="contenedorOpciones"></div>
+    </div>
+
+    <div id="feedback"></div>
+    <button id="btnSig" class="btn-sig" onclick="siguientePregunta()">SIGUIENTE PREGUNTA ➔</button>
+</div>
+
+<script>
+    const bancoOriginal = [
+        { q: "¿Qué esfuerzo sufre un pilar al soportar un tejado?", a: ["Compresión", "Tracción", "Torsión"], c: 0 },
+        { q: "En escala 1:20, ¿cuánto son 5cm en la realidad?", a: ["10 cm", "1m (100cm)", "50 cm"], c: 1 },
+        { q: "¿Cómo se llama el esfuerzo que intenta 'estirar' una pieza?", a: ["Flexión", "Cizalladura", "Tracción"], c: 2 },
+        { q: "¿Cuál es la unión más débil en una impresión FDM?", a: ["El relleno", "Entre capas", "La capa externa"], c: 1 },
+        { q: "¿Qué software se usa para 'laminar' el diseño 3D?", a: ["Slicer (Cura/Prusa)", "Excel", "Photoshop"], c: 0 },
+        { q: "Si doblamos una viga, la parte superior sufre...", a: ["Tracción", "Compresión", "Pandeo"], c: 1 },
+        { q: "¿Qué escala usarías para dibujar un tornillo pequeño?", a: ["Reducción", "Ampliación", "Natural"], c: 1 },
+        { q: "¿Para qué sirven los soportes en impresión 3D?", a: ["Ahorrar filamento", "Imprimir voladizos", "Que brille más"], c: 1 },
+        { q: "Un esfuerzo de torsión ocurre al...", a: ["Retorcer la pieza", "Aplastar la pieza", "Cortar la pieza"], c: 0 },
+        { q: "En escala 1:50, 2 metros reales son...", a: ["2 cm", "4 cm", "10 cm"], c: 1 },
+        { q: "¿Qué relleno (infill) suele ser más resistente?", a: ["Lineal", "Triangular / Giroide", "Ninguno"], c: 1 },
+        { q: "El pandeo ocurre en piezas...", a: ["Largas y delgadas", "Cortas y gruesas", "Esféricas"], c: 0 },
+        { q: "¿Qué es el 'Warping'?", a: ["Un tipo de soporte", "Despegue de la base por calor", "Un material nuevo"], c: 1 },
+        { q: "¿Cuál es una vista principal en dibujo técnico?", a: ["Alzado", "Perspectiva", "Plano de corte"], c: 0 },
+        { q: "¿Qué material es el más común en institutos?", a: ["ABS", "PLA", "Fibra de carbono"], c: 1 }
+    ];
+
+    let preguntas = [];
+    let indiceActual = 0;
+    let aciertos = 0; // <--- AQUÍ LA VARIABLE QUE FALTABA
+
+    function iniciar() {
+        preguntas = bancoOriginal.sort(() => Math.random() - 0.5);
+        aciertos = 0;
+        indiceActual = 0;
+        mostrarPregunta();
+    }
+
+    function mostrarPregunta() {
+        const p = preguntas[indiceActual];
+        document.getElementById('progreso').innerText = `Pregunta ${indiceActual + 1} de 15`;
+        document.getElementById('txtPregunta').innerText = p.q;
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('btnSig').style.display = "none";
+        
+        const contenedor = document.getElementById('contenedorOpciones');
+        contenedor.innerHTML = "";
+        
+        p.a.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'opcion';
+            btn.innerText = opt;
+            btn.onclick = () => validar(i, btn);
+            contenedor.appendChild(btn);
+        });
+    }
+
+    function validar(elegido, btnElemento) {
+        const correcta = preguntas[indiceActual].c;
+        const fb = document.getElementById('feedback');
+        const botones = document.querySelectorAll('.opcion');
+        
+        botones.forEach(b => b.disabled = true);
+
+        if (elegido === correcta) {
+            aciertos++; // <--- SUMAMOS PUNTO
+            fb.innerText = "✅ ¡Correcto!";
+            fb.style.color = "#2ecc71";
+            btnElemento.style.background = "#2ecc71";
+            btnElemento.style.color = "black";
+        } else {
+            fb.innerText = "❌ Incorrecto";
+            fb.style.color = "#e74c3c";
+            btnElemento.style.background = "#e74c3c";
+        }
+        
+        document.getElementById('btnSig').style.display = "block";
+    }
+
+    function siguientePregunta() {
+        indiceActual++;
+        if (indiceActual < preguntas.length) {
+            mostrarPregunta();
+        } else {
+            // CÁLCULO DE LA NOTA FINAL
+            const notaFinal = ((aciertos / 15) * 10).toFixed(1);
+            document.getElementById('juego').innerHTML = `<h3>¡Test Finalizado!</h3><p>Has acertado ${aciertos} de 15 preguntas.</p>`;
+            document.getElementById('btnSig').style.display = "none";
+            document.getElementById('feedback').style.fontSize = "1.5em";
+            document.getElementById('feedback').innerHTML = `Nota Final: <span style="color:${notaFinal >= 5 ? '#2ecc71' : '#e74c3c'}">${notaFinal}</span>`;
+            document.getElementById('progreso').innerText = "Resultados obtenidos";
+        }
+    }
+
+    iniciar();
+</script>
+
+</body>
+</html>
