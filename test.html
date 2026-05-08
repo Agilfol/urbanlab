@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador IA - UrbanLab</title>
+    <style>
+        body { background-color: #1a1a1a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { border: 3px solid #3498db; padding: 30px; border-radius: 15px; text-align: center; background: #222; max-width: 500px; box-shadow: 0 0 20px rgba(52,152,219,0.3); }
+        h2 { color: #3498db; }
+        #pregunta { background: #333; padding: 20px; border-radius: 8px; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-left: 5px solid #3498db; }
+        button { background: #3498db; color: white; padding: 15px 25px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        button:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>🤖 SIMULADOR IA URBANLAB</h2>
+        <p>Entrena tus conocimientos técnicos antes de imprimir:</p>
+        <div id="pregunta">Pulsa el botón para empezar...</div>
+        <button onclick="sacarPregunta()">GENERAR PREGUNTA</button>
+    </div>
+
+    <script>
+        function sacarPregunta() {
+            const lista = [
+                "¿Qué ocurre si orientamos las capas en la misma dirección que la tracción?",
+                "Escala 1:50. ¿Cuántos cm son 2 metros reales?",
+                "¿Cuál es el punto más débil de una pieza impresa en 3D?",
+                "¿Qué es el esfuerzo de pandeo y dónde puede ocurrir en tu diseño?",
+                "¿Para qué sirven los soportes en el laminador?"
+            ];
+            document.getElementById('pregunta').innerText = lista[Math.floor(Math.random() * lista.length)];
+        }
+    </script>
+</body>
+</html>
