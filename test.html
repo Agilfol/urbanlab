@@ -2,34 +2,30 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Simulador IA - UrbanLab</title>
+    <title>Test IA UrbanLab</title>
     <style>
-        body { background-color: #1a1a1a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { border: 3px solid #3498db; padding: 30px; border-radius: 15px; text-align: center; background: #222; max-width: 500px; box-shadow: 0 0 20px rgba(52,152,219,0.3); }
-        h2 { color: #3498db; }
-        #pregunta { background: #333; padding: 20px; border-radius: 8px; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-left: 5px solid #3498db; }
-        button { background: #3498db; color: white; padding: 15px 25px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        button:hover { background: #2980b9; }
+        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { border: 2px solid #3498db; padding: 25px; border-radius: 12px; text-align: center; background: #1e1e1e; max-width: 450px; }
+        #pregunta { font-size: 1.2em; margin: 20px 0; color: #3498db; min-height: 60px; }
+        button { background: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>🤖 SIMULADOR IA URBANLAB</h2>
-        <p>Entrena tus conocimientos técnicos antes de imprimir:</p>
-        <div id="pregunta">Pulsa el botón para empezar...</div>
-        <button onclick="sacarPregunta()">GENERAR PREGUNTA</button>
+        <h3>🤖 SIMULADOR IA URBANLAB</h3>
+        <p id="pregunta">Pulsa el botón para generar una pregunta técnica</p>
+        <button onclick="next()">NUEVA PREGUNTA</button>
     </div>
-
     <script>
-        function sacarPregunta() {
-            const lista = [
-                "¿Qué ocurre si orientamos las capas en la misma dirección que la tracción?",
-                "Escala 1:50. ¿Cuántos cm son 2 metros reales?",
-                "¿Cuál es el punto más débil de una pieza impresa en 3D?",
-                "¿Qué es el esfuerzo de pandeo y dónde puede ocurrir en tu diseño?",
-                "¿Para qué sirven los soportes en el laminador?"
+        function next() {
+            const qs = [
+                "¿Qué es el esfuerzo de tracción en una pieza impresa?",
+                "¿Cómo influye la escala 1:20 en una medida de 10cm?",
+                "¿Por qué es importante la orientación de las capas?",
+                "Define el esfuerzo de compresión en un pilar.",
+                "¿Qué ocurre si no usas soportes en voladizos?"
             ];
-            document.getElementById('pregunta').innerText = lista[Math.floor(Math.random() * lista.length)];
+            document.getElementById('pregunta').innerText = qs[Math.floor(Math.random() * qs.length)];
         }
     </script>
 </body>
